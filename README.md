@@ -31,20 +31,20 @@ O EducaTech SC é uma plataforma educativa desenvolvida para ajudar idosos de Sa
   TailwindCSS
 
 **📦 Instalações**
+
     git clone https://github.com/seu-usuario/educatech-sc
     cd educatech-sc
     npm install
     npm run dev
 
 Crie um arquivo .env.local com:
+
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
     CLERK_SECRET_KEY=
     MONGODB_URI=
 
 **🎯 Objetivo do Projeto**
-
     Educar, proteger e empoderar idosos digitalmente, reduzindo golpes online e promovendo autonomia tecnológica na região de Santa Catarina.
 
 **🤝 Contribuições**
-
     Aberto para melhorias e sugestões!
