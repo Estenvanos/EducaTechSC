@@ -24,19 +24,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      const res = await fetch("/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clerkId, fullName, email }),
-      });
+      try {
 
-      if (!res.ok) {
-        console.error("Failed syncing user:", await res.text());
-        return;
+        const getRes = await fetch(`/api/users/${clerkId}`);
+
+        if (getRes.ok) {
+          const data = await getRes.json();
+          setMongoUser(data);
+          return;
+        }
+
+
+        if (getRes.status !== 404) {
+          console.error("Unexpected error fetching user:", await getRes.text());
+        }
+
+
+        const createRes = await fetch("/api/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ clerkId, fullName, email }),
+        });
+
+        if (!createRes.ok) {
+          console.error("Failed creating user:", await createRes.text());
+          return;
+        }
+
+        const newUser = await createRes.json();
+        setMongoUser(newUser);
+
+      } catch (err) {
+        console.error("AuthProvider ERROR:", err);
       }
-
-      const data = await res.json();
-      setMongoUser(data);
     };
 
     syncUser();
