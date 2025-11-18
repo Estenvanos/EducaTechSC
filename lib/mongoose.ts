@@ -1,12 +1,25 @@
 import mongoose from "mongoose";
+const uri = "mongodb+srv://estevan:qlsL9wrLEXXuxjxo@educatech.yjliltn.mongodb.net/?appName=educaTech"
+let isConnected = false; 
 
-const connectToDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI as string);
-        console.log("Connected to MongoDB");
-    } catch (error) {
-        console.log(error)
-    }
-}
+export const connectToDB = async () => {
+  if (isConnected) {
+    return;
+  }
 
-export default connectToDB
+  if (!uri){
+    throw new Error("Missing MONGODB_URI environment variable");
+  }
+
+  try {
+    const db = await mongoose.connect(uri,{
+      dbName: "educaTech",
+    });
+
+    isConnected = db.connections[0].readyState === 1;
+
+    console.log("MongoDB connected");
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+  }
+};
