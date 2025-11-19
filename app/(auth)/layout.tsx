@@ -12,7 +12,7 @@ export default async function AuthLayout({
    if (isAuthenticated) redirect('/')
 
   return (
-    <main className="size-full flex flex-col">
+    <main className="h-screen w-screen flex flex-col p-2">
       <AuthHeader />
       {children}
     </main>
