@@ -15,7 +15,7 @@ const ModulesWrapper = async () => {
 
 
   return (
-    <div className="w-full flex flex-col gap-6 overflow-y-hidden items-center px-2">
+    <div className="w-full flex flex-col gap-6 overflow-y-hidden h-3/5 items-center ">
       {modules.map((module: { _id: string; title: string }) => {
         const randomColor = getRandomColor();
 
@@ -25,7 +25,7 @@ const ModulesWrapper = async () => {
             key={module._id}
             className={`${randomColor} w-full py-3 rounded-lg cursor-pointer transition-all duration-300 items-center justify-center flex`}
           >
-            <p className="font-bold text-xl text-white">{module.title}</p>
+            <p className="font-bold text-xl text-white text-center">{module.title}</p>
           </Link>
         );
       })}
