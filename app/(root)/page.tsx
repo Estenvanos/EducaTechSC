@@ -6,7 +6,7 @@ const Home = () => {
 
 
   return (
-    <section className="flex flex-col size-full h-screen px-5">
+    <section className="flex flex-col  w-full h-full px-5">
       <RootHeader />
       <p className="font-bold text-center text-2xl text-black my-8">
         Oque você quer aprender hoje ?

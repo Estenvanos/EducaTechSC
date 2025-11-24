@@ -9,7 +9,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthProvider>
-      <main className="min-h-screen w-full overflow-x-hidden p-2">
+      <main className="h-screen w-full p-2">
         {children}</main>
     </AuthProvider>
   );
