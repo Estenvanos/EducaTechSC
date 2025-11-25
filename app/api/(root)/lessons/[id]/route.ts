@@ -2,11 +2,14 @@ import Lesson from "@/lib/models/Lesson";
 import { connectToDB } from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(_: Request, context: { params: Promise<{ id: string }> }) {
   try {
+    const { params } = context;
+    const { id } = await params; // ⬅ unwrap the params promise
+
     await connectToDB();
 
-    const lesson = await Lesson.findById(params.id).populate("moduleId").lean();
+    const lesson = await Lesson.findById(id).populate("moduleId").lean();
 
     if (!lesson) {
       return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
