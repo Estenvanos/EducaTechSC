@@ -21,3 +21,12 @@ export interface Lesson {
   likes?: number;
   dislikes?: number;
 }
+
+export interface User {
+  _id: string;
+  clerkId: string;
+  fullName: string;
+  email: string;
+  likedLessons: string[];
+  dislikedLessons: string[];
+}

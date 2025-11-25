@@ -62,3 +62,28 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: "Failed to delete lesson" }, { status: 500 });
   }
 }
+
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+  try {
+    await connectToDB();
+
+    const { id } = await context.params;
+    const { lessonUpdate } = await request.json();
+    
+    const incObject: any = {};
+    if (lessonUpdate.likes) incObject.likes = lessonUpdate.likes;
+    if (lessonUpdate.dislikes) incObject.dislikes = lessonUpdate.dislikes;
+
+    const updatedLesson = await Lesson.findByIdAndUpdate(
+      id,
+      { $inc: incObject },
+      { new: true }
+    );
+
+    return NextResponse.json(updatedLesson, { status: 200 });
+
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Failed to update lesson" }, { status: 500 });
+  }
+}

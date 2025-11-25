@@ -1,15 +1,22 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
+import { User } from "@/types";
 
-export const AuthContext = React.createContext({
+interface AuthContextType {
+  mongoUser: User | null;
+  currentUser: () => User | null;
+}
+
+export const AuthContext = React.createContext<AuthContextType>({
   mongoUser: null,
+  currentUser: () => null,
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoaded } = useUser();
-  const [mongoUser, setMongoUser] = useState(null);
+  const [mongoUser, setMongoUser] = useState<User | null>(null);
 
   useEffect(() => {
     const syncUser = async () => {
@@ -25,7 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       try {
-
+        // Try fetching the user
         const getRes = await fetch(`/api/users/${clerkId}`);
 
         if (getRes.ok) {
@@ -34,17 +41,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           return;
         }
 
-
         if (getRes.status !== 404) {
           console.error("Unexpected error fetching user:", await getRes.text());
         }
 
-
+        // If not found, create new user
         const createRes = await fetch("/api/users", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ clerkId, fullName, email }),
         });
 
@@ -55,7 +59,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const newUser = await createRes.json();
         setMongoUser(newUser);
-
       } catch (err) {
         console.error("AuthProvider ERROR:", err);
       }
@@ -64,8 +67,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     syncUser();
   }, [isLoaded, user]);
 
+  // stable function to return the mongo user
+  const currentUser = useCallback(() => mongoUser, [mongoUser]);
+
+
   return (
-    <AuthContext.Provider value={{ mongoUser }}>
+    <AuthContext.Provider value={{ mongoUser, currentUser }}>
       {children}
     </AuthContext.Provider>
   );

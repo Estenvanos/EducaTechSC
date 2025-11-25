@@ -10,7 +10,6 @@ const ModulePage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [moduleId, setModuleId] = useState<string>("");
   const [moduleTitle, setModuleTitle] = useState("");
   const [lessons, setLessons] = useState<Lesson[]>([]);
-  console.log(lessons);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,6 +18,9 @@ const ModulePage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   useEffect(() => {
     const fetchLessonsAndTitle = async () => {
+
+      if(!moduleId) return;
+      
       try {
         const moduleRes = await fetch(`/api/modules/${moduleId}`);
         const moduleData = await moduleRes.json();

@@ -33,7 +33,6 @@ const SignIn = () => {
       password,
     });
 
-    console.log(result);
 
     if (result.status === "complete") {
       router.push("/");
