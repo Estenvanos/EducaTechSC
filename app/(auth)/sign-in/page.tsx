@@ -33,7 +33,6 @@ const SignIn = () => {
       password,
     });
 
-    console.log(result);
 
     if (result.status === "complete") {
       router.push("/");
@@ -61,12 +60,12 @@ const SignIn = () => {
   };
 
   return (
-    <div className="size-full flex flex-col items-center">
+    <div className="size-full flex flex-col items-center px-2">
       <div className="flex flex-col gap-1 w-full p-2 place-items-center">
-        <p className="text-black font-bold text-4xl tracking-wider">
+        <p className="text-black font-bold text-4xl tracking-wider text-center">
           Bem-vindo de volta!
         </p>
-        <p className="text-black font-bold text-xl ">
+        <p className="text-black font-bold text-xl text-center ">
           Entre para continuar aprendendo
         </p>
       </div>

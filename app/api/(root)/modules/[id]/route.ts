@@ -2,13 +2,16 @@ import Module from "@/lib/models/Module";
 import { connectToDB } from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 
-
-
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  _: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connectToDB();
 
-    const moduleItem = await Module.findById(params.id).lean();
+    const { id } = await params; // <- FIX
+
+    const moduleItem = await Module.findById(id).lean();
 
     if (!moduleItem) {
       return NextResponse.json({ error: "Module not found" }, { status: 404 });
@@ -17,12 +20,17 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
     return NextResponse.json(moduleItem, { status: 200 });
   } catch (error) {
     console.error("GET /modules/:id ERROR:", error);
-    return NextResponse.json({ error: "Failed to fetch module" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch module" },
+      { status: 500 }
+    );
   }
 }
 
-
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectToDB();
 
@@ -39,12 +47,17 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     return NextResponse.json(updated, { status: 200 });
   } catch (error) {
     console.error("PUT /modules/:id ERROR:", error);
-    return NextResponse.json({ error: "Failed to update module" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update module" },
+      { status: 500 }
+    );
   }
 }
 
-
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  _: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectToDB();
 
@@ -57,6 +70,9 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
     return NextResponse.json({ message: "Module deleted" }, { status: 200 });
   } catch (error) {
     console.error("DELETE /modules/:id ERROR:", error);
-    return NextResponse.json({ error: "Failed to delete module" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to delete module" },
+      { status: 500 }
+    );
   }
 }

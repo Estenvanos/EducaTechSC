@@ -67,12 +67,12 @@ const SignUp = () => {
   };
 
   return (
-    <div className="size-full flex flex-col items-center">
+    <div className="size-full flex flex-col items-center px-2">
       <div className="flex flex-col gap-1 w-full p-2 place-items-center">
-        <p className="text-black font-bold text-4xl tracking-wider">
+        <p className="text-black font-bold text-4xl tracking-wider text-center">
           Cadastre-se!
         </p>
-        <p className="text-black font-bold text-xl">
+        <p className="text-black font-bold text-xl text-center">
           Crie sua conta e comece a aprender
         </p>
       </div>

@@ -21,12 +21,15 @@ export async function POST(request: Request) {
       );
     }
 
-
-    const newUser = await User.create({ clerkId, fullName, email });
-    
+    const newUser = await User.create({
+      clerkId,
+      fullName,
+      email,
+      likedLessons: [],
+      dislikedLessons: [],
+    });
 
     return NextResponse.json(newUser);
-
   } catch (error) {
     console.error("API ERROR /api/users", error);
     return NextResponse.json(
