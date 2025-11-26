@@ -1,4 +1,4 @@
-import { Lesson } from "@/types";
+import { Lesson, Module } from "@/types";
 
 export const colors = [
   "bg-red-500 hover:bg-red-600",
@@ -41,3 +41,95 @@ export const extractYouTubeId = (url: string | undefined) => {
 export function getModuleId(moduleId: Lesson["moduleId"]) {
   return typeof moduleId === "string" ? moduleId : moduleId._id;
 }
+
+export const getChatMessage = async (
+  index: number,
+  modules: Module[],
+  moduleId?: string
+) => {
+  let sorted : Lesson[] = [];
+  if (moduleId) {
+    console.log(moduleId)
+     const res = await fetch("/api/lessons");
+        const allLessons = await res.json();
+
+        const moduleLessons = allLessons.filter((l: Lesson) => {
+          const lModuleId = getModuleId(l.moduleId);
+          return lModuleId === moduleId;
+        });
+
+         sorted = moduleLessons.sort((a: Lesson, b: Lesson) => {
+          const getNumber = (title: string) =>
+            parseInt(title.match(/Aula\s*(\d+)/i)?.[1] || "999");
+
+          return getNumber(a.title) - getNumber(b.title);
+        });
+  }
+
+  const initial_message = { 
+    main : "Olá eu sou um assistente virtual, como poderia lhe ajudar ?",
+    options : {
+      0 : {info : "Gostaria de ver um módulo", index : 1 },
+      1 : {info : "Auxilio no meu login", index : 2 },
+    }
+  };
+
+  const module_message = {
+    main : "Aqui estao os modulos disponiveis",
+    options : modules.map((module) => ({
+      label: module.title,
+      moduleId: module._id,
+      index: 3
+    })),
+    exit : {
+      info : "Voltar",
+      index : 0
+    }
+  };
+
+  const help_login_message = {
+    main : "Estamos trabalhando nessa função"
+  };
+
+  const module_lesson_message = {
+    main : "Qual aula do módulo deseja assistir?",
+    options : sorted.map((lesson) => ({
+      label: lesson.title,
+      lessonId: lesson._id
+    })),
+    exit : {
+      info : "Voltar",
+      index : 1
+    }
+  };
+
+  switch (index) {
+    case 0:
+      return initial_message;
+
+    case 1:
+      return module_message;
+
+    case 2:
+      return help_login_message;
+
+    case 3:
+      return module_lesson_message;
+
+    default:
+      return initial_message;
+  }
+};
+
+export const speak = (text: string) => {
+
+    if (!window.speechSynthesis) return;
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "pt-BR"; // or "en-US"
+  utter.rate = 1;
+  utter.pitch = 1;
+  utter.volume = 10;
+
+  window.speechSynthesis.speak(utter);
+};
