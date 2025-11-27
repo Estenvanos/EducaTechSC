@@ -1,7 +1,7 @@
 "use client";
 
 import { Lesson } from "@/types";
-import {  BASE_URL, getYoutubeThumbnail } from "@/utils";
+import { BASE_URL, getYoutubeThumbnail } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -18,9 +18,8 @@ const ModulePage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   useEffect(() => {
     const fetchLessonsAndTitle = async () => {
+      if (!moduleId) return;
 
-      if(!moduleId) return;
-      
       try {
         const moduleRes = await fetch(`${BASE_URL}/api/modules/${moduleId}`);
         const moduleData = await moduleRes.json();
@@ -32,10 +31,9 @@ const ModulePage = ({ params }: { params: Promise<{ id: string }> }) => {
         const res = await fetch(`${BASE_URL}/api/lessons`);
         const allLessons = await res.json();
 
-        const moduleLessons = allLessons.filter((l: Lesson) => {
-          const lModuleId = moduleId;
-          return lModuleId === moduleId;
-        });
+        const moduleLessons = allLessons.filter(
+          (l: Lesson) => l?.moduleId && l.moduleId === moduleId
+        );
 
         const sorted = moduleLessons.sort((a: Lesson, b: Lesson) => {
           const getNumber = (title: string) =>
