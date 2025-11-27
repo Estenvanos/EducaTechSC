@@ -2,10 +2,9 @@ import Lesson from "@/lib/models/Lesson";
 import { connectToDB } from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 
-export async function GET(_: Request, context: { params: Promise<{ id: string }> }) {
+export async function GET(_: Request,  { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { params } = context;
-    const { id } = await params; // ⬅ unwrap the params promise
+    const id = (await params).id;
 
     await connectToDB();
 
@@ -23,13 +22,14 @@ export async function GET(_: Request, context: { params: Promise<{ id: string }>
 }
 
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectToDB();
 
+    const id = (await params).id;
     const data = await request.json();
 
-    const updatedLesson = await Lesson.findByIdAndUpdate(params.id, data, {
+    const updatedLesson = await Lesson.findByIdAndUpdate(id, data, {
       new: true,
       runValidators: true,
     });
@@ -46,11 +46,13 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 // DELETE → Remover a lesson
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectToDB();
 
-    const deletedLesson = await Lesson.findByIdAndDelete(params.id);
+    const id = (await params).id;
+
+    const deletedLesson = await Lesson.findByIdAndDelete(id);
 
     if (!deletedLesson) {
       return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
@@ -63,11 +65,11 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
   }
 }
 
-export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+export async function POST(request: Request,  { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectToDB();
 
-    const { id } = await context.params;
+    const id = (await params).id;
     const { lessonUpdate } = await request.json();
     
     const incObject: any = {};

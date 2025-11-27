@@ -9,7 +9,7 @@ export async function GET(
   try {
     await connectToDB();
 
-    const { id } = await params; // <- FIX
+    const id = (await params).id;
 
     const moduleItem = await Module.findById(id).lean();
 
@@ -29,13 +29,14 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDB();
+    const id = (await params).id;
 
     const body = await request.json();
-    const updated = await Module.findByIdAndUpdate(params.id, body, {
+    const updated = await Module.findByIdAndUpdate(id, body, {
       new: true,
       runValidators: true,
     });
@@ -56,12 +57,12 @@ export async function PUT(
 
 export async function DELETE(
   _: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDB();
-
-    const deleted = await Module.findByIdAndDelete(params.id);
+    const id = (await params).id;
+    const deleted = await Module.findByIdAndDelete(id);
 
     if (!deleted) {
       return NextResponse.json({ error: "Module not found" }, { status: 404 });

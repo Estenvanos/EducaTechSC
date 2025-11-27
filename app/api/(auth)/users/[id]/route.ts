@@ -5,10 +5,10 @@ import { NextResponse } from "next/server";
 // GET /api/users/:clerkId
 export async function GET(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await connectToDB();
-  const { id } = await context.params;
+  const id = (await params).id;
 
   const user = await User.findOne({ clerkId: id });
 
@@ -22,17 +22,15 @@ export async function GET(
 // PUT /api/users/:clerkId
 export async function PUT(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await connectToDB();
-  const { id } = await context.params;
+  const id = (await params).id;
   const data = await req.json();
 
-  const user = await User.findOneAndUpdate(
-    { clerkId: id },
-    data,
-    { new: true }
-  );
+  const user = await User.findOneAndUpdate({ clerkId: id }, data, {
+    new: true,
+  });
 
   return NextResponse.json(user, { status: 200 });
 }
@@ -40,10 +38,10 @@ export async function PUT(
 // DELETE /api/users/:clerkId
 export async function DELETE(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await connectToDB();
-  const { id } = await context.params;
+  const id = (await params).id;
 
   await User.findOneAndDelete({ clerkId: id });
 
