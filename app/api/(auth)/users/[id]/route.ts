@@ -3,12 +3,10 @@ import { connectToDB } from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 
 // GET /api/users/:clerkId
-export async function GET(
-  req: Request,
-  context: { params: Promise<{ id: string }> }
+export async function GET(_: Request, { params }: { params: { id: string } }
 ) {
   await connectToDB();
-  const { id } = await context.params;
+  const id = (await params).id;
 
   const user = await User.findOne({ clerkId: id });
 
@@ -38,12 +36,10 @@ export async function PUT(
 }
 
 // DELETE /api/users/:clerkId
-export async function DELETE(
-  req: Request,
-  context: { params: Promise<{ id: string }> }
+export async function DELETE(_: Request, { params }: { params: { id: string }}
 ) {
   await connectToDB();
-  const { id } = await context.params;
+const id = (await params).id;
 
   await User.findOneAndDelete({ clerkId: id });
 
