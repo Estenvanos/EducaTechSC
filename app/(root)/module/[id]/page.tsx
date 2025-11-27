@@ -16,6 +16,7 @@ const ModulePage = ({ params }: { params: Promise<{ id: string }> }) => {
     params.then((p) => setModuleId(p.id));
   }, [params]);
 
+
   useEffect(() => {
     const fetchLessonsAndTitle = async () => {
       if (!moduleId) return;
@@ -30,10 +31,13 @@ const ModulePage = ({ params }: { params: Promise<{ id: string }> }) => {
 
         const res = await fetch(`${BASE_URL}/api/lessons`);
         const allLessons = await res.json();
+        console.log(allLessons, moduleId);
 
         const moduleLessons = allLessons.filter(
           (l: Lesson) => l?.moduleId && l.moduleId === moduleId
         );
+
+        console.log(moduleLessons);
 
         const sorted = moduleLessons.sort((a: Lesson, b: Lesson) => {
           const getNumber = (title: string) =>
@@ -68,16 +72,14 @@ const ModulePage = ({ params }: { params: Promise<{ id: string }> }) => {
             href={`/lesson/${lessons[0]._id}`}
             className="rounded-xl overflow-hidden shadow-md relative"
           >
-            <div className="relative w-full h-[280px]">
-              <Image
+            <div className="relative w-full h-[280px] bg-[#38b6ff] rounded-t-xl">
+                     <Image
                 src={getYoutubeThumbnail(lessons[0].videoUrl)}
                 alt="thumbnail"
                 width={1980}
                 height={1080}
                 className="rounded-xl w-full h-full object-cover rounded-b-none"
               />
-
-              {/* Play button overlay */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="bg-black/50 p-4 rounded-full backdrop-blur-sm">
                   <svg

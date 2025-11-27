@@ -89,3 +89,4 @@ export async function POST(request: Request,  { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Failed to update lesson" }, { status: 500 });
   }
 }
+

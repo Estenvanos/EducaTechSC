@@ -18,9 +18,7 @@ export function useLessonPage(lessonId: string) {
   const [alreadyLiked, setAlreadyLiked] =
     useState<"like" | "dislike" | null>(null);
 
-  /*
-   * 1. LOAD LESSON
-   */
+
   useEffect(() => {
     if (!lessonId) return;
 

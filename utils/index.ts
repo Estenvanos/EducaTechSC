@@ -20,9 +20,16 @@ export const shuffleColors = (array: string[]) => {
   return copy;
 };
 
-export const getYoutubeThumbnail = (url: string) => {
-  const match = url.match(/v=([^&]+)/);
-  const videoId = match ? match[1] : "";
+export const getYoutubeThumbnail = (url?: string) => {
+  if (!url) return "/default_video.png";
+  const regex =
+    /(?:youtube\.com.*(?:v=|embed\/)|youtu\.be\/)([^"&?\/\s]{11})/;
+
+  const match = url.match(regex);
+  const videoId = match ? match[1] : null;
+
+  if (!videoId) return "/default_video.png";
+
   return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
 };
 
@@ -53,10 +60,9 @@ export const getChatMessage = async (
     const res = await fetch(`${BASE_URL}/api/lessons`);
     const allLessons = await res.json();
 
-    const moduleLessons = allLessons.filter((l: Lesson) => {
-      const lModuleId = moduleId;
-      return lModuleId === moduleId;
-    });
+        const moduleLessons = allLessons.filter(
+          (l: Lesson) => l?.moduleId && l.moduleId === moduleId
+        );
 
     sorted = moduleLessons.sort((a: Lesson, b: Lesson) => {
       const getNumber = (title: string) =>
