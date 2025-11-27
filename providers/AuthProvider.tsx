@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { User } from "@/types";
+import { BASE_URL } from "@/utils";
 
 interface AuthContextType {
   mongoUser: User | null;
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       try {
         // Try fetching the user
-        const getRes = await fetch(`/api/users/${clerkId}`);
+        const getRes = await fetch(`${BASE_URL}/api/users/${clerkId}`);
 
         if (getRes.ok) {
           const data = await getRes.json();
@@ -46,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         // If not found, create new user
-        const createRes = await fetch("/api/users", {
+        const createRes = await fetch(`${BASE_URL}/api/users`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ clerkId, fullName, email }),

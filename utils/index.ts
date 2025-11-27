@@ -47,60 +47,60 @@ export const getChatMessage = async (
   modules: Module[],
   moduleId?: string
 ) => {
-  let sorted : Lesson[] = [];
+  let sorted: Lesson[] = [];
   if (moduleId) {
-    console.log(moduleId)
-     const res = await fetch("/api/lessons");
-        const allLessons = await res.json();
+    console.log(moduleId);
+    const res = await fetch(`${BASE_URL}/api/lessons`);
+    const allLessons = await res.json();
 
-        const moduleLessons = allLessons.filter((l: Lesson) => {
-          const lModuleId = moduleId;
-          return lModuleId === moduleId;
-        });
+    const moduleLessons = allLessons.filter((l: Lesson) => {
+      const lModuleId = moduleId;
+      return lModuleId === moduleId;
+    });
 
-         sorted = moduleLessons.sort((a: Lesson, b: Lesson) => {
-          const getNumber = (title: string) =>
-            parseInt(title.match(/Aula\s*(\d+)/i)?.[1] || "999");
+    sorted = moduleLessons.sort((a: Lesson, b: Lesson) => {
+      const getNumber = (title: string) =>
+        parseInt(title.match(/Aula\s*(\d+)/i)?.[1] || "999");
 
-          return getNumber(a.title) - getNumber(b.title);
-        });
+      return getNumber(a.title) - getNumber(b.title);
+    });
   }
 
-  const initial_message = { 
-    main : "Olá eu sou um assistente virtual, como poderia lhe ajudar ?",
-    options : {
-      0 : {info : "Gostaria de ver um módulo", index : 1 },
-      1 : {info : "Auxilio no meu login", index : 2 },
-    }
+  const initial_message = {
+    main: "Olá eu sou um assistente virtual, como poderia lhe ajudar ?",
+    options: {
+      0: { info: "Gostaria de ver um módulo", index: 1 },
+      1: { info: "Auxilio no meu login", index: 2 },
+    },
   };
 
   const module_message = {
-    main : "Aqui estao os modulos disponiveis",
-    options : modules.map((module) => ({
+    main: "Aqui estao os modulos disponiveis",
+    options: modules.map((module) => ({
       label: module.title,
       moduleId: module._id,
-      index: 3
+      index: 3,
     })),
-    exit : {
-      info : "Voltar",
-      index : 0
-    }
+    exit: {
+      info: "Voltar",
+      index: 0,
+    },
   };
 
   const help_login_message = {
-    main : "Estamos trabalhando nessa função"
+    main: "Estamos trabalhando nessa função",
   };
 
   const module_lesson_message = {
-    main : "Qual aula do módulo deseja assistir?",
-    options : sorted.map((lesson) => ({
+    main: "Qual aula do módulo deseja assistir?",
+    options: sorted.map((lesson) => ({
       label: lesson.title,
-      lessonId: lesson._id
+      lessonId: lesson._id,
     })),
-    exit : {
-      info : "Voltar",
-      index : 1
-    }
+    exit: {
+      info: "Voltar",
+      index: 1,
+    },
   };
 
   switch (index) {
@@ -132,3 +132,8 @@ export const speak = (text: string) => {
 
   window.speechSynthesis.speak(utter);
 };
+
+export const BASE_URL =
+  typeof window === "undefined"
+    ? process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+    : "";

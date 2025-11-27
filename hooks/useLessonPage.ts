@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { LessonBase } from "@/types";
 import { useUser } from "@clerk/nextjs";
 import { useAuth } from "./useAuth";
+import { BASE_URL } from "@/utils";
 
 export function useLessonPage(lessonId: string) {
   const [lesson, setLesson] = useState<LessonBase | null>(null);
@@ -25,13 +26,13 @@ export function useLessonPage(lessonId: string) {
 
     const loadLesson = async () => {
       try {
-        const res = await fetch(`/api/lessons/${lessonId}`);
+        const res = await fetch(`${BASE_URL}/api/lessons/${lessonId}`);
         const current = await res.json();
         setLesson(current);
 
         const moduleId = current.moduleId;
 
-        const allRes = await fetch("/api/lessons");
+        const allRes = await fetch(`${BASE_URL}/api/lessons`);
         const all: LessonBase[] = await allRes.json();
 
         const moduleLessons = all
@@ -78,7 +79,7 @@ export function useLessonPage(lessonId: string) {
     if (!user?.id) return;
 
     // fetch current db user
-    const userRes = await fetch(`/api/users/${user.id}`);
+    const userRes = await fetch(`${BASE_URL}/api/users/${user.id}`);
     const userData = await userRes.json();
 
     const liked = userData.likedLessons.includes(lessonId);
@@ -119,13 +120,13 @@ export function useLessonPage(lessonId: string) {
       }
     }
 
-    await fetch(`/api/lessons/${lessonId}`, {
+    await fetch(`${BASE_URL}/api/lessons/${lessonId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lessonUpdate }),
     });
 
-    await fetch(`/api/users/${user.id}`, {
+    await fetch(`${BASE_URL}/api/users/${user.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userUpdate),

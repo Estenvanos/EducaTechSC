@@ -1,7 +1,7 @@
 "use client";
 
 import { Lesson } from "@/types";
-import {  getYoutubeThumbnail } from "@/utils";
+import {  BASE_URL, getYoutubeThumbnail } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -22,14 +22,14 @@ const ModulePage = ({ params }: { params: Promise<{ id: string }> }) => {
       if(!moduleId) return;
       
       try {
-        const moduleRes = await fetch(`/api/modules/${moduleId}`);
+        const moduleRes = await fetch(`${BASE_URL}/api/modules/${moduleId}`);
         const moduleData = await moduleRes.json();
 
         if (moduleData?.title) {
           setModuleTitle(moduleData.title);
         }
 
-        const res = await fetch("/api/lessons");
+        const res = await fetch(`${BASE_URL}/api/lessons`);
         const allLessons = await res.json();
 
         const moduleLessons = allLessons.filter((l: Lesson) => {

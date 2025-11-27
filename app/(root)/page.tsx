@@ -1,9 +1,9 @@
 import ModulesWrapper from "@/components/ModulesWrapper";
 import HelpButton from "@/components/HelpButton";
-import { colors, shuffleColors } from "@/utils";
+import { BASE_URL, colors, shuffleColors } from "@/utils";
 
 const Home = async () => {
-  const res = await fetch("http://localhost:3000/api/modules", {
+  const res = await fetch(`${BASE_URL}/api/modules`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     cache: "force-cache",
