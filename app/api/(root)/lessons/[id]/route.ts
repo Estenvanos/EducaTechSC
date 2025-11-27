@@ -72,7 +72,7 @@ export async function POST(request: Request,  { params }: { params: Promise<{ id
     const id = (await params).id;
     const { lessonUpdate } = await request.json();
     
-    const incObject: any = {};
+    const incObject: { likes?: number; dislikes?: number } = {};
     if (lessonUpdate.likes) incObject.likes = lessonUpdate.likes;
     if (lessonUpdate.dislikes) incObject.dislikes = lessonUpdate.dislikes;
 

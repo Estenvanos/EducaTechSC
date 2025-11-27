@@ -38,6 +38,7 @@ const SignIn = () => {
       router.push("/");
     }
   } catch (err) {
+    console.error(err);
     setError("Email ou senha inválidos.");
   } finally {
     setLoading(false);
@@ -54,6 +55,7 @@ const SignIn = () => {
         redirectUrlComplete: "/",
       });
     } catch (err) {
+      console.error(err);
       setError("Erro ao entrar com Google.");
       setLoading(false);
     }

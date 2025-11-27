@@ -1,4 +1,5 @@
 import Lesson from "@/lib/models/Lesson";
+import "@/lib/models/Module";
 import { connectToDB } from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 

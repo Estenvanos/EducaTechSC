@@ -38,9 +38,9 @@ export const extractYouTubeId = (url: string | undefined) => {
   return null;
 };
 
-export function getModuleId(moduleId: Lesson["moduleId"]) {
-  return typeof moduleId === "string" ? moduleId : moduleId._id;
-}
+// export function getModuleId(moduleId: Lesson["moduleId"]) {
+//   return typeof moduleId === "string" ? moduleId : moduleId._id;
+// }
 
 export const getChatMessage = async (
   index: number,
@@ -54,7 +54,7 @@ export const getChatMessage = async (
         const allLessons = await res.json();
 
         const moduleLessons = allLessons.filter((l: Lesson) => {
-          const lModuleId = getModuleId(l.moduleId);
+          const lModuleId = moduleId;
           return lModuleId === moduleId;
         });
 
@@ -122,8 +122,7 @@ export const getChatMessage = async (
 };
 
 export const speak = (text: string) => {
-
-    if (!window.speechSynthesis) return;
+  if (!window.speechSynthesis) return;
 
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = "pt-BR"; // or "en-US"

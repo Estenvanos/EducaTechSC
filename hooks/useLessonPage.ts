@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { LessonBase } from "@/types";
-import { getModuleId } from "@/utils";
 import { useUser } from "@clerk/nextjs";
 import { useAuth } from "./useAuth";
 
@@ -30,13 +29,13 @@ export function useLessonPage(lessonId: string) {
         const current = await res.json();
         setLesson(current);
 
-        const moduleId = getModuleId(current.moduleId);
+        const moduleId = current.moduleId;
 
         const allRes = await fetch("/api/lessons");
         const all: LessonBase[] = await allRes.json();
 
         const moduleLessons = all
-          .filter((l) => getModuleId(l.moduleId) === moduleId)
+          .filter((l) => (l.moduleId) === moduleId)
           .sort((a, b) => {
             const num = (t: string) =>
               parseInt(t.match(/Aula\s*(\d+)/i)?.[1] || "999");

@@ -1,7 +1,7 @@
 "use client";
 
 import { Lesson } from "@/types";
-import { getModuleId, getYoutubeThumbnail } from "@/utils";
+import {  getYoutubeThumbnail } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -33,7 +33,7 @@ const ModulePage = ({ params }: { params: Promise<{ id: string }> }) => {
         const allLessons = await res.json();
 
         const moduleLessons = allLessons.filter((l: Lesson) => {
-          const lModuleId = getModuleId(l.moduleId);
+          const lModuleId = moduleId;
           return lModuleId === moduleId;
         });
 
