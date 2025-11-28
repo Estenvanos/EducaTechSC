@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const uri = "mongodb+srv://estevan:qlsL9wrLEXXuxjxo@educatech.yjliltn.mongodb.net/?appName=educaTech"
+const uri = process.env.MONGODB_URI;
 let isConnected = false; 
 
 export const connectToDB = async () => {
