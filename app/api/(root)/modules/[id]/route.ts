@@ -1,5 +1,6 @@
 import Module from "@/lib/models/Module";
 import { connectToDB } from "@/lib/mongoose";
+import { verifyAdminToken } from "@/lib/verifyAdmin";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -32,6 +33,11 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const isAdmin = verifyAdminToken(request);
+
+    if (!isAdmin) {
+      return new Response("Forbidden", { status: 403 });
+    }
     await connectToDB();
     const id = (await params).id;
 
@@ -60,6 +66,11 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const isAdmin = verifyAdminToken(_);
+
+    if (!isAdmin) {
+      return new Response("Forbidden", { status: 403 });
+    }
     await connectToDB();
     const id = (await params).id;
     const deleted = await Module.findByIdAndDelete(id);

@@ -1,8 +1,8 @@
 import Lesson from "@/lib/models/Lesson";
 import "@/lib/models/Module";
 import { connectToDB } from "@/lib/mongoose";
+import { verifyAdminToken } from "@/lib/verifyAdmin";
 import { NextResponse } from "next/server";
-
 
 export async function GET() {
   try {
@@ -13,13 +13,20 @@ export async function GET() {
     return NextResponse.json(lessons, { status: 200 });
   } catch (error) {
     console.error("GET /lessons ERROR:", error);
-    return NextResponse.json({ error: "Failed to fetch lessons" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch lessons" },
+      { status: 500 }
+    );
   }
 }
 
-
 export async function POST(request: Request) {
   try {
+    const isAdmin = verifyAdminToken(request);
+
+    if (!isAdmin) {
+      return new Response("Forbidden", { status: 403 });
+    }
     await connectToDB();
 
     const { title, videoUrl, moduleId } = await request.json();
@@ -36,6 +43,9 @@ export async function POST(request: Request) {
     return NextResponse.json(newLesson, { status: 201 });
   } catch (error) {
     console.error("POST /lessons ERROR:", error);
-    return NextResponse.json({ error: "Failed to create lesson" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create lesson" },
+      { status: 500 }
+    );
   }
 }

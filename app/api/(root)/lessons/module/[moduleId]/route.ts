@@ -1,5 +1,6 @@
 import Lesson from "@/lib/models/Lesson";
 import { connectToDB } from "@/lib/mongoose";
+import { verifyAdminToken } from "@/lib/verifyAdmin";
 import { NextResponse } from "next/server";
 
 export async function DELETE(
@@ -7,6 +8,12 @@ export async function DELETE(
   { params }: { params: Promise<{ moduleId: string }> }
 ) {
   try {
+
+      const isAdmin = verifyAdminToken(_);
+    
+      if (!isAdmin) {
+        return new Response("Forbidden", { status: 403 });
+      }
     const  moduleId  = (await params).moduleId;
 
     await connectToDB();

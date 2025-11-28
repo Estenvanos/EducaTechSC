@@ -1,5 +1,7 @@
 "use client";
 
+import { getAllLessons } from "@/lib/actions/lessons.action";
+import { getSingleModule } from "@/lib/actions/models.actions";
 import { Lesson } from "@/types";
 import { BASE_URL, getYoutubeThumbnail } from "@/utils";
 import Image from "next/image";
@@ -22,22 +24,19 @@ const ModulePage = ({ params }: { params: Promise<{ id: string }> }) => {
       if (!moduleId) return;
 
       try {
-        const moduleRes = await fetch(`${BASE_URL}/api/modules/${moduleId}`);
-        const moduleData = await moduleRes.json();
+        const moduleData = await getSingleModule(moduleId)
 
         if (moduleData?.title) {
           setModuleTitle(moduleData.title);
         }
 
-        const res = await fetch(`${BASE_URL}/api/lessons`);
-        const allLessons = await res.json();
-        console.log(allLessons, moduleId);
+        const allLessons = await getAllLessons()
+    
 
         const moduleLessons = allLessons.filter(
           (l: Lesson) => l?.moduleId && l.moduleId === moduleId
         );
 
-        console.log(moduleLessons);
 
         const sorted = moduleLessons.sort((a: Lesson, b: Lesson) => {
           const getNumber = (title: string) =>

@@ -1,8 +1,12 @@
 import Lesson from "@/lib/models/Lesson";
 import { connectToDB } from "@/lib/mongoose";
+import { verifyAdminToken } from "@/lib/verifyAdmin";
 import { NextResponse } from "next/server";
 
-export async function GET(_: Request,  { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  _: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const id = (await params).id;
 
@@ -17,13 +21,23 @@ export async function GET(_: Request,  { params }: { params: Promise<{ id: strin
     return NextResponse.json(lesson, { status: 200 });
   } catch (error) {
     console.error("GET /lessons/[id] ERROR:", error);
-    return NextResponse.json({ error: "Failed to fetch lesson" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch lesson" },
+      { status: 500 }
+    );
   }
 }
 
-
-export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const isAdmin = verifyAdminToken(request);
+
+    if (!isAdmin) {
+      return new Response("Forbidden", { status: 403 });
+    }
     await connectToDB();
 
     const id = (await params).id;
@@ -41,13 +55,24 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json(updatedLesson, { status: 200 });
   } catch (error) {
     console.error("PUT /lessons/[id] ERROR:", error);
-    return NextResponse.json({ error: "Failed to update lesson" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update lesson" },
+      { status: 500 }
+    );
   }
 }
 
 // DELETE → Remover a lesson
-export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  _: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const isAdmin = verifyAdminToken(_);
+
+    if (!isAdmin) {
+      return new Response("Forbidden", { status: 403 });
+    }
     await connectToDB();
 
     const id = (await params).id;
@@ -61,17 +86,23 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ message: "Lesson deleted" }, { status: 200 });
   } catch (error) {
     console.error("DELETE /lessons/[id] ERROR:", error);
-    return NextResponse.json({ error: "Failed to delete lesson" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to delete lesson" },
+      { status: 500 }
+    );
   }
 }
 
-export async function POST(request: Request,  { params }: { params: Promise<{ id: string }> }) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connectToDB();
 
     const id = (await params).id;
     const { lessonUpdate } = await request.json();
-    
+
     const incObject: { likes?: number; dislikes?: number } = {};
     if (lessonUpdate.likes) incObject.likes = lessonUpdate.likes;
     if (lessonUpdate.dislikes) incObject.dislikes = lessonUpdate.dislikes;
@@ -83,10 +114,11 @@ export async function POST(request: Request,  { params }: { params: Promise<{ id
     );
 
     return NextResponse.json(updatedLesson, { status: 200 });
-
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Failed to update lesson" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update lesson" },
+      { status: 500 }
+    );
   }
 }
-

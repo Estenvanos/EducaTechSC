@@ -31,17 +31,15 @@ export interface User {
   dislikedLessons: string[];
 }
 
-
 interface BaseMessage {
   main: string;
   options?: OptionBase[] | { [key: number]: OptionBase };
   exit?: OptionBase;
 }
 
-
 /* MENU INICIAL — index 0 */
 interface InitialMessage extends BaseMessage {
-options: Record<number, { info: string; index: number }>;
+  options: Record<number, { info: string; index: number }>;
 }
 
 /* LISTA DE MÓDULOS — index 1 */
@@ -74,9 +72,19 @@ export interface OptionBase {
   lessonId?: string;
 }
 
-
 export type MessageProps =
   | InitialMessage
   | ModuleMessage
   | HelpLoginMessage
   | LessonMessage;
+
+export interface UserUpdatePayload {
+  $pull?: {
+    likedLessons?: string;
+    dislikedLessons?: string;
+  };
+  $addToSet?: {
+    likedLessons?: string;
+    dislikedLessons?: string;
+  };
+};

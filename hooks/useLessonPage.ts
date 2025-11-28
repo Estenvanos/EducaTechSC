@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { LessonBase } from "@/types";
 import { useUser } from "@clerk/nextjs";
 import { useAuth } from "./useAuth";
-import { BASE_URL } from "@/utils";
+import { getAllLessons, getSingleLesson, updateLesson } from "@/lib/actions/lessons.action";
+import { getUser, updateUserLikes } from "@/lib/actions/user.actions";
 
 export function useLessonPage(lessonId: string) {
   const [lesson, setLesson] = useState<LessonBase | null>(null);
@@ -24,14 +25,12 @@ export function useLessonPage(lessonId: string) {
 
     const loadLesson = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/lessons/${lessonId}`);
-        const current = await res.json();
+        const current = await getSingleLesson(lessonId);
         setLesson(current);
 
         const moduleId = current.moduleId;
 
-        const allRes = await fetch(`${BASE_URL}/api/lessons`);
-        const all: LessonBase[] = await allRes.json();
+        const all: LessonBase[] = await getAllLessons();
 
         const moduleLessons = all
           .filter((l) => (l.moduleId) === moduleId)
@@ -77,8 +76,8 @@ export function useLessonPage(lessonId: string) {
     if (!user?.id) return;
 
     // fetch current db user
-    const userRes = await fetch(`${BASE_URL}/api/users/${user.id}`);
-    const userData = await userRes.json();
+    
+    const userData = await getUser(user.id);
 
     const liked = userData.likedLessons.includes(lessonId);
     const disliked = userData.dislikedLessons.includes(lessonId);
@@ -110,7 +109,7 @@ export function useLessonPage(lessonId: string) {
         lessonUpdate = { dislikes: 1, likes: -1 };
         userUpdate = {
           $pull: { likedLessons: lessonId },
-          $addToSet: { dislikedLessons: lessonId },
+          $addToSet: { dislikedLessons: lessonId }, 
         };
       } else {
         lessonUpdate = { dislikes: 1 };
@@ -118,17 +117,9 @@ export function useLessonPage(lessonId: string) {
       }
     }
 
-    await fetch(`${BASE_URL}/api/lessons/${lessonId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ lessonUpdate }),
-    });
+    await updateLesson(lessonId, lessonUpdate);
 
-    await fetch(`${BASE_URL}/api/users/${user.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userUpdate),
-    });
+    await updateUserLikes(user.id, userUpdate);
   };
 
   return {

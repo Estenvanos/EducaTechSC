@@ -1,5 +1,6 @@
 import Module from "@/lib/models/Module";
 import { connectToDB } from "@/lib/mongoose";
+import { verifyAdminToken } from "@/lib/verifyAdmin";
 import { NextResponse } from "next/server";
 
 
@@ -18,6 +19,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+      const isAdmin = verifyAdminToken(request);
+    
+      if (!isAdmin) {
+        return new Response("Forbidden", { status: 403 });
+      }
     await connectToDB();
 
     const { title, category } = await request.json();

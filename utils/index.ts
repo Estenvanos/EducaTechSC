@@ -1,3 +1,4 @@
+import { getAllLessons } from "@/lib/actions/lessons.action";
 import { Lesson, Module } from "@/types";
 
 export const colors = [
@@ -22,8 +23,7 @@ export const shuffleColors = (array: string[]) => {
 
 export const getYoutubeThumbnail = (url?: string) => {
   if (!url) return "/default_video.png";
-  const regex =
-    /(?:youtube\.com.*(?:v=|embed\/)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const regex = /(?:youtube\.com.*(?:v=|embed\/)|youtu\.be\/)([^"&?\/\s]{11})/;
 
   const match = url.match(regex);
   const videoId = match ? match[1] : null;
@@ -45,10 +45,6 @@ export const extractYouTubeId = (url: string | undefined) => {
   return null;
 };
 
-// export function getModuleId(moduleId: Lesson["moduleId"]) {
-//   return typeof moduleId === "string" ? moduleId : moduleId._id;
-// }
-
 export const getChatMessage = async (
   index: number,
   modules: Module[],
@@ -56,13 +52,11 @@ export const getChatMessage = async (
 ) => {
   let sorted: Lesson[] = [];
   if (moduleId) {
-    console.log(moduleId);
-    const res = await fetch(`${BASE_URL}/api/lessons`);
-    const allLessons = await res.json();
+    const allLessons = await getAllLessons();
 
-        const moduleLessons = allLessons.filter(
-          (l: Lesson) => l?.moduleId && l.moduleId === moduleId
-        );
+    const moduleLessons = allLessons.filter(
+      (l: Lesson) => l?.moduleId && l.moduleId === moduleId
+    );
 
     sorted = moduleLessons.sort((a: Lesson, b: Lesson) => {
       const getNumber = (title: string) =>

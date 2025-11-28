@@ -65,32 +65,36 @@ const ChatBot = ({ open, setOpen, modules }: Props) => {
     }
 
     if (index === 1) {
-  return message.options
-    .filter((opt): opt is { label: string; moduleId: string; index: number } =>
-      "moduleId" in opt
-    )
-    .map((opt) => (
-      <ChatOption
-        key={opt.moduleId}
-        label={opt.label}
-        onClick={() => {
-          setModuleId(opt.moduleId);
-          setIndex(opt.index);
-        }}
-      />
-    ));
-}
+      return message.options
+        .filter(
+          (opt): opt is { label: string; moduleId: string; index: number } =>
+            "moduleId" in opt
+        )
+        .map((opt) => (
+          <ChatOption
+            key={opt.moduleId}
+            label={opt.label}
+            onClick={() => {
+              setModuleId(opt.moduleId);
+              setIndex(opt.index);
+            }}
+          />
+        ));
+    }
 
     if (index === 3) {
-  return message.options
-    .filter((opt): opt is { label: string; lessonId: string } =>
-      "lessonId" in opt
-    )
-    .map((opt, index) => (
-      <ChatLinkOption key={index} label={opt.label} href={`/lesson/${opt.lessonId}`} />
-    ));
-}
-
+      return message.options
+        .filter(
+          (opt): opt is { label: string; lessonId: string } => "lessonId" in opt
+        )
+        .map((opt, index) => (
+          <ChatLinkOption
+            key={index}
+            label={opt.label}
+            href={`/lesson/${opt.lessonId}`}
+          />
+        ));
+    }
 
     return null;
   };
@@ -107,7 +111,13 @@ const ChatBot = ({ open, setOpen, modules }: Props) => {
       `}
     >
       <div className="w-full h-1/9 bg-blue-800  flex items-center justify-end px-7">
-        <button onClick={() => setOpen(false)} className="text-white cursor-pointer">
+        <button
+          onClick={() => {
+            setOpen(false);
+            setMuted(true);
+          }}
+          className="text-white cursor-pointer"
+        >
           <X size={40} />
         </button>
       </div>
