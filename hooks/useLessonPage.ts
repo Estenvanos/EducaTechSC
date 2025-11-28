@@ -4,21 +4,29 @@ import { useEffect, useState } from "react";
 import { LessonBase } from "@/types";
 import { useUser } from "@clerk/nextjs";
 import { useAuth } from "./useAuth";
-import { getAllLessons, getSingleLesson, updateLesson } from "@/lib/actions/lessons.action";
+import {
+  getAllLessons,
+  getSingleLesson,
+  updateLesson,
+} from "@/lib/actions/lessons.action";
 import { getUser, updateUserLikes } from "@/lib/actions/user.actions";
 
 export function useLessonPage(lessonId: string) {
   const [lesson, setLesson] = useState<LessonBase | null>(null);
   const [prevLesson, setPrevLesson] = useState<LessonBase | null>(null);
   const [nextLesson, setNextLesson] = useState<LessonBase | null>(null);
+  
+
   const [loading, setLoading] = useState(true);
+
+  console.log(lessonId)
 
   const { user } = useUser();
   const { mongoUser } = useAuth();
 
-  const [alreadyLiked, setAlreadyLiked] =
-    useState<"like" | "dislike" | null>(null);
-
+  const [alreadyLiked, setAlreadyLiked] = useState<"like" | "dislike" | null>(
+    null
+  );
 
   useEffect(() => {
     if (!lessonId) return;
@@ -33,7 +41,7 @@ export function useLessonPage(lessonId: string) {
         const all: LessonBase[] = await getAllLessons();
 
         const moduleLessons = all
-          .filter((l) => (l.moduleId) === moduleId)
+          .filter((l) => l.moduleId === moduleId)
           .sort((a, b) => {
             const num = (t: string) =>
               parseInt(t.match(/Aula\s*(\d+)/i)?.[1] || "999");
@@ -53,6 +61,17 @@ export function useLessonPage(lessonId: string) {
 
     loadLesson();
   }, [lessonId]);
+
+  useEffect(() => {
+  console.log("CHECK LIKE STATE →", {
+    lessonId,
+    likedLessons: mongoUser?.likedLessons,
+    dislikedLessons: mongoUser?.dislikedLessons,
+    includesLike: mongoUser?.likedLessons.includes(lessonId),
+    includesDislike: mongoUser?.dislikedLessons.includes(lessonId)
+  });
+}, [mongoUser, lessonId]);
+
 
   /*
    * 2. INITIAL FEEDBACK STATE
@@ -76,7 +95,7 @@ export function useLessonPage(lessonId: string) {
     if (!user?.id) return;
 
     // fetch current db user
-    
+
     const userData = await getUser(user.id);
 
     const liked = userData.likedLessons.includes(lessonId);
@@ -109,7 +128,7 @@ export function useLessonPage(lessonId: string) {
         lessonUpdate = { dislikes: 1, likes: -1 };
         userUpdate = {
           $pull: { likedLessons: lessonId },
-          $addToSet: { dislikedLessons: lessonId }, 
+          $addToSet: { dislikedLessons: lessonId },
         };
       } else {
         lessonUpdate = { dislikes: 1 };

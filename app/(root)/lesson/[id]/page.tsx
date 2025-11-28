@@ -5,8 +5,10 @@ import { extractYouTubeId } from "@/utils";
 import Link from "next/link";
 import { useLessonPage } from "@/hooks/useLessonPage";
 
+
 const LessonPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [lessonId, setLessonId] = useState("");
+  const [instantLikeEffect, setInstantLikeEffect] = useState<"like" | "dislike" | null>(null)
 
   useEffect(() => {
     params.then((p) => setLessonId(p.id));
@@ -20,6 +22,7 @@ const LessonPage = ({ params }: { params: Promise<{ id: string }> }) => {
     alreadyLiked,
     sendFeedback,
   } = useLessonPage(lessonId);
+
 
   if (loading || !lesson) return <div>Carregando...</div>;
 
@@ -76,10 +79,11 @@ const LessonPage = ({ params }: { params: Promise<{ id: string }> }) => {
           disabled={alreadyLiked === "like"}
           onClick={() => {
             sendFeedback("likes");
+            setInstantLikeEffect("like")
           }}
           className={`w-1/2 bg-green-600 text-white rounded-xl py-4 font-bold text-2xl shadow-md cursor-pointer
             ${
-              alreadyLiked === "like"
+              alreadyLiked === "like" || instantLikeEffect === "like"
                 ? "opacity-20 cursor-not-allowed"
                 : "cursor-pointer"
             }`}
@@ -91,10 +95,11 @@ const LessonPage = ({ params }: { params: Promise<{ id: string }> }) => {
           disabled={alreadyLiked === "dislike"}
           onClick={() => {
             sendFeedback("dislikes");
+            setInstantLikeEffect("dislike")
           }}
           className={`w-1/2 bg-red-500 text-white rounded-xl py-4 font-bold text-2xl shadow-md cursor-pointer
             ${
-              alreadyLiked === "dislike"
+              alreadyLiked === "dislike" || instantLikeEffect === "dislike" 
                 ? "opacity-20 cursor-not-allowed"
                 : "cursor-pointer"
             }`}
