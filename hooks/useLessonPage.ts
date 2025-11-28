@@ -15,11 +15,9 @@ export function useLessonPage(lessonId: string) {
   const [lesson, setLesson] = useState<LessonBase | null>(null);
   const [prevLesson, setPrevLesson] = useState<LessonBase | null>(null);
   const [nextLesson, setNextLesson] = useState<LessonBase | null>(null);
-  
+
 
   const [loading, setLoading] = useState(true);
-
-  console.log(lessonId)
 
   const { user } = useUser();
   const { mongoUser } = useAuth();
@@ -61,16 +59,6 @@ export function useLessonPage(lessonId: string) {
 
     loadLesson();
   }, [lessonId]);
-
-  useEffect(() => {
-  console.log("CHECK LIKE STATE →", {
-    lessonId,
-    likedLessons: mongoUser?.likedLessons,
-    dislikedLessons: mongoUser?.dislikedLessons,
-    includesLike: mongoUser?.likedLessons.includes(lessonId),
-    includesDislike: mongoUser?.dislikedLessons.includes(lessonId)
-  });
-}, [mongoUser, lessonId]);
 
 
   /*
