@@ -20,7 +20,7 @@ O EducaTech SC é uma plataforma educativa desenvolvida para ajudar idosos de Sa
 
 **🛠️ Tecnologias**
 
-  Next.js 14 (App Router)
+  Next.js 16 (App Router)
 
   Clerk Auth
 
